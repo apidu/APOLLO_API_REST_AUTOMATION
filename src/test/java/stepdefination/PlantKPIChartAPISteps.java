@@ -9,8 +9,10 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import paylaods.Payloads;
 import report.ExtentReportManager;
 import utils.ConfigManager;
+import utils.TokenManager;
 
 
 import static io.restassured.RestAssured.given;
@@ -19,39 +21,26 @@ import static org.testng.Assert.*;
 public class PlantKPIChartAPISteps {
 
     private String baseURI= ConfigManager.getProperty("url");
-    String accessToken;
+
     Response apiResponse;
 
     @Given("I authenticate to the Plant KPI Chart API")
     public void authenticateToPlantKPIChartAPI() {
-        RestAssured.baseURI = baseURI;
-        RestAssured.useRelaxedHTTPSValidation();
 
-        String username = ConfigManager.getProperty("username");
-        String password = ConfigManager.getProperty("password");
-        //String username = "prameshwar";
-        //String password = "Hzb@3333";
+        String accessToken = TokenManager.getAccessToken();
+        System.out.println("Access Token: " + accessToken);
 
-        String authRequestBody = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"rememberMe\":true}";
-
-        Response authResponse = given()
-                .contentType(ContentType.JSON)
-                .body(authRequestBody)
-                .when()
-                .post("/auth/login");
-
-        assertEquals(authResponse.getStatusCode(), 200, "Authentication failed");
-        accessToken = authResponse.jsonPath().getString("access_token");
-        assertNotNull(accessToken, "Access token not found");
     }
 
     @When("I send a POST request to the Plant KPI Chart API")
     public void sendRequestToPlantKPIChartAPI() {
-        String requestBody = "[{\"plantId\":2,\"instanceType\":\"PLANT\",\"instanceIdList\":[2],\"kpiCode\":\"PLANT_ACTIVE_POWER\",\"fromDate\":\"2024-10-20\",\"toDate\":\"2024-10-20\",\"interDayOperation\":null,\"groupBy\":\"MINUTE\",\"timezone\":null,\"fromTime\":\"00:00\",\"toTime\":\"23:59\"},{\"plantId\":2,\"instanceType\":\"PLANT\",\"instanceIdList\":[2],\"kpiCode\":\"PLANT_POA_IRRADIATION_POWER\",\"fromDate\":\"2024-10-20\",\"toDate\":\"2024-10-20\",\"interDayOperation\":null,\"groupBy\":\"MINUTE\",\"timezone\":null,\"fromTime\":\"00:00\",\"toTime\":\"23:59\"}]";
+        //String requestBody = "[{\"plantId\":2,\"instanceType\":\"PLANT\",\"instanceIdList\":[2],\"kpiCode\":\"PLANT_ACTIVE_POWER\",\"fromDate\":\"2024-10-20\",\"toDate\":\"2024-10-20\",\"interDayOperation\":null,\"groupBy\":\"MINUTE\",\"timezone\":null,\"fromTime\":\"00:00\",\"toTime\":\"23:59\"},{\"plantId\":2,\"instanceType\":\"PLANT\",\"instanceIdList\":[2],\"kpiCode\":\"PLANT_POA_IRRADIATION_POWER\",\"fromDate\":\"2025-01-20\",\"toDate\":\"2025-01-23\",\"interDayOperation\":null,\"groupBy\":\"MINUTE\",\"timezone\":null,\"fromTime\":\"00:00\",\"toTime\":\"23:59\"}]";
 
+        String requestBody = Payloads.getPlantKPIChartPayload();
         apiResponse = given()
                 .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + accessToken)
+                .body(requestBody)
+                .header("Authorization", "Bearer " + TokenManager.getAccessToken())
                 .when()
                 .post("/apollokpimgmt/api/plant-kpi-provider/chart");
 

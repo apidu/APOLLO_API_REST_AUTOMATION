@@ -1,5 +1,5 @@
 Feature: Plant KPI Chart API Testing
-#PlantKPIChartAPISteps
+#PlantKPIChartAPISteps   //Plant level Roc Live Trend Widget
   Scenario: Validate Plant KPI Chart API Response
     Given I authenticate to the Plant KPI Chart API
     When I send a POST request to the Plant KPI Chart API

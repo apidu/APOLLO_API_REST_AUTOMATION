@@ -10,6 +10,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import report.ExtentReportManager;
 import utils.ConfigManager;
+import utils.TokenManager;
 
 import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
@@ -19,7 +20,7 @@ public class PortfolioKPISelectionSteps {
 
    // private String baseURI = "https://sandbox.apolloenergyanalytics.com";
     private String baseURI= ConfigManager.getProperty("url");
-    private String accessToken;
+
     private Response apiResponse;
     ExtentTest test;
 
@@ -32,29 +33,10 @@ public class PortfolioKPISelectionSteps {
         // Create a new test in the report
         test = ExtentReportManager.createTest("Portfolio KPI Selection - Authentication");
 
-        
-        RestAssured.baseURI = baseURI;
-        RestAssured.useRelaxedHTTPSValidation();
-
-        String username = ConfigManager.getProperty("username");
-        String password = ConfigManager.getProperty("password");
-        //String username = "prameshwar";
-        //String password = "Hzb@3333";
-
-        String authRequestBody = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"rememberMe\":true}";
+        String accessToken = TokenManager.getAccessToken();
+        System.out.println("Access Token: " + accessToken);
 
 
-        Response authResponse = given()
-                .contentType(ContentType.JSON)
-                .body(authRequestBody)
-                .when()
-                .post("/auth/login");
-
-        assertEquals(authResponse.getStatusCode(), 200, "Authentication failed");
-        accessToken = authResponse.jsonPath().getString("access_token");
-        assertNotNull(accessToken, "Access token not found");
-
-        int statusCode = authResponse.getStatusCode();
 
 
     }
@@ -63,7 +45,7 @@ public class PortfolioKPISelectionSteps {
     public void sendRequestToPortfolioKPISelection() {
         apiResponse = given()
                 .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + TokenManager.getAccessToken())
                 .when()
                 .get("/apollokpimgmt/api/portfolio-kpi/advanceanalytics/selection");
     }

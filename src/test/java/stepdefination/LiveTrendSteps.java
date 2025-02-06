@@ -10,21 +10,27 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import paylaods.Payloads;
 import utils.ConfigManager;
+import utils.TokenManager;
 
 public class LiveTrendSteps {
 
 
-    
+    //Genrate acces token
+    //User name pass and   stored in config proeprty.
 
-        //String baseURI = "https://sandbox.apolloenergyanalytics.com";
+
         private String baseURI= ConfigManager.getProperty("url");
         String accessToken;
         Response apiResponse;
 
         @Given("I authenticate to the Live Trend API")
         public void authenticateToLiveTrendAPI() {
-        RestAssured.baseURI = baseURI;
+
+            String accessToken = TokenManager.getAccessToken();
+            System.out.println("Access Token: " + accessToken);
+      /**  RestAssured.baseURI = baseURI;
         RestAssured.useRelaxedHTTPSValidation();
 
             String username = ConfigManager.getProperty("username");
@@ -42,18 +48,19 @@ public class LiveTrendSteps {
 
         assertEquals(authResponse.getStatusCode(), 200, "Authentication failed");
         accessToken = authResponse.jsonPath().getString("access_token");
-        assertNotNull(accessToken, "Access token not found");
+        assertNotNull(accessToken, "Access token not found");**/
     }
-
+//LIVE TREND  WIDGET PLANT LEVEL ASSET NAME: TRACKER
         @When("I send a request to the Live Trend API")
         public void sendRequestToLiveTrendAPI() {
-        String apiRequestBody = "[{\"plantId\":2,\"instanceType\":\"TRACKER\",\"instanceIdList\":[\"1\",\"13\",\"14\",\"15\"],\"kpiCode\":\"TRACKER_ACCURACY_LIVE\",\"fromDate\":\"2024-08-27\",\"toDate\":\"2024-08-27\"}]";
+       // String apiRequestBody = "[{\"plantId\":2,\"instanceType\":\"TRACKER\",\"instanceIdList\":[\"1\",\"13\",\"14\",\"15\"],\"kpiCode\":\"TRACKER_ACCURACY_LIVE\",\"fromDate\":\"2025-01-20\",\"toDate\":\"2025-01-23\"}]";
 
+            String payload = Payloads.getLiveTrendPayload();
             apiResponse = given()
                     .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Authorization", "Bearer " + TokenManager.getAccessToken())
 
-                .body(apiRequestBody)
+                .body(payload)
                 .when()
                 .post("/apollokpimgmt/api/plant-kpi-provider/chart");
     }
