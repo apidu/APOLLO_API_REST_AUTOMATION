@@ -42,7 +42,7 @@ public class PlantKPIChartAPISteps {
                 .body(requestBody)
                 .header("Authorization", "Bearer " + TokenManager.getAccessToken())
                 .when()
-                .post("/apollokpimgmt/api/plant-kpi-provider/chart");
+                .post("l");
 
         assertEquals(apiResponse.getStatusCode(),200,"Status code not matched ");
     }

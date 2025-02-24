@@ -30,25 +30,7 @@ public class LiveTrendSteps {
 
             String accessToken = TokenManager.getAccessToken();
             System.out.println("Access Token: " + accessToken);
-      /**  RestAssured.baseURI = baseURI;
-        RestAssured.useRelaxedHTTPSValidation();
-
-            String username = ConfigManager.getProperty("username");
-            String password = ConfigManager.getProperty("password");
-        //String username = "prameshwar";
-        //String password = "Hzb@3333";
-
-        String authRequestBody = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"rememberMe\":true}";
-
-        Response authResponse = given()
-                .contentType(ContentType.JSON)
-                .body(authRequestBody)
-                .when()
-                .post("/auth/login");
-
-        assertEquals(authResponse.getStatusCode(), 200, "Authentication failed");
-        accessToken = authResponse.jsonPath().getString("access_token");
-        assertNotNull(accessToken, "Access token not found");**/
+      
     }
 //LIVE TREND  WIDGET PLANT LEVEL ASSET NAME: TRACKER
         @When("I send a request to the Live Trend API")
